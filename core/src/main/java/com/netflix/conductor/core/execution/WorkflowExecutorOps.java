@@ -1354,7 +1354,11 @@ public class WorkflowExecutorOps implements WorkflowExecutor {
         taskToBeSkipped.setWorkflowPriority(workflow.getPriority());
         taskToBeSkipped.setStatus(SKIPPED);
         taskToBeSkipped.setEndTime(System.currentTimeMillis());
-        taskToBeSkipped.setTaskType(workflowTask.getName());
+        taskToBeSkipped.setTaskType(workflowTask.getType());
+        taskToBeSkipped.setWorkflowTask(workflowTask);
+        if (workflowTask.getTaskDefinition() != null) {
+            taskToBeSkipped.setTaskDefName(workflowTask.getTaskDefinition().getName());
+        }
         taskToBeSkipped.setCorrelationId(workflow.getCorrelationId());
         if (skipTaskRequest != null) {
             taskToBeSkipped.setInputData(skipTaskRequest.getTaskInput());

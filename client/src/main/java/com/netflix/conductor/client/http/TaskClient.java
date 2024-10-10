@@ -224,6 +224,27 @@ public class TaskClient extends ClientBase {
         postForEntityWithRequestOnly("tasks", taskResult);
     }
 
+    public String updateTask(
+            String workflowId,
+            String taskRefName,
+            TaskResult.Status status,
+            String workerId,
+            Map<String, Object> taskOutputData) {
+        Validate.notBlank(workflowId, "WorkflowId cannot be null");
+        Validate.notBlank(taskRefName, "TaskRefName cannot be null");
+        Validate.notNull(status, "Status cannot be null");
+        Validate.notNull(taskOutputData, "TaskOutputData cannot be null");
+
+        return postForEntity(
+                "tasks/{workflowId}/{taskRefName}/{status}",
+                taskOutputData,
+                new Object[] {"workerid", workerId},
+                String.class,
+                workflowId,
+                taskRefName,
+                status);
+    }
+
     public Optional<String> evaluateAndUploadLargePayload(
             Map<String, Object> taskOutputData, String taskType) {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {

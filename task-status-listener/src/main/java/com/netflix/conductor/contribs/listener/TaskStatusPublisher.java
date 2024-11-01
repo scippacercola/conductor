@@ -64,8 +64,10 @@ public class TaskStatusPublisher implements TaskStatusListener {
                 try {
                     task = blockingQueue.take();
                     taskNotification = new TaskNotification(task.toTask());
-                    String jsonTask = taskNotification.toJsonString();
-                    LOGGER.info("Publishing TaskNotification: {}", jsonTask);
+                    if (LOGGER.isInfoEnabled()) {
+                        String jsonTask = taskNotification.toJsonString();
+                        LOGGER.info("Publishing TaskNotification: {}", jsonTask);
+                    }
                     if (taskNotification.getTaskType().equals("SUB_WORKFLOW")) {
                         LOGGER.info(
                                 "Skip task '{}' notification. Task type is SUB_WORKFLOW.",

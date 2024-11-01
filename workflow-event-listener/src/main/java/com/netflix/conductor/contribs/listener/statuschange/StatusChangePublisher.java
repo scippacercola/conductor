@@ -40,12 +40,12 @@ public class StatusChangePublisher implements WorkflowStatusListener {
 
     class ExceptionHandler implements Thread.UncaughtExceptionHandler {
         public void uncaughtException(Thread t, Throwable e) {
-            LOGGER.info("An exception has been captured\n");
-            LOGGER.info("Thread: {}\n", t.getName());
-            LOGGER.info("Exception: {}: {}\n", e.getClass().getName(), e.getMessage());
-            LOGGER.info("Stack Trace: \n");
-            e.printStackTrace(System.out);
-            LOGGER.info("Thread status: {}\n", t.getState());
+            LOGGER.warn(
+                "An exception has been captured\n" +
+                "Thread: " + t.getName() + "\n" +
+                "Exception: " + e.getClass().getName() + ": " + e.getMessage() + "\n" +
+                "Thread status: " + t.getState() + "\n", e
+            );
             new ConsumerThread().start();
         }
     }
@@ -63,12 +63,12 @@ public class StatusChangePublisher implements WorkflowStatusListener {
                 try {
                     workflow = blockingQueue.take();
                     statusChangeNotification = new StatusChangeNotification(workflow.toWorkflow());
-                    if (LOGGER.isInfoEnabled()) {
+                    if (LOGGER.isDebugEnabled()) {
                         String jsonWorkflow = statusChangeNotification.toJsonString();
-                        LOGGER.info("Publishing StatusChangeNotification: {}", jsonWorkflow);
+                        LOGGER.debug("Publishing StatusChangeNotification: {}", jsonWorkflow);
                     }
                     publishStatusChangeNotification(statusChangeNotification);
-                    LOGGER.debug(
+                    LOGGER.info(
                             "Workflow {} publish is successful.",
                             statusChangeNotification.getWorkflowId());
                     Thread.sleep(5);

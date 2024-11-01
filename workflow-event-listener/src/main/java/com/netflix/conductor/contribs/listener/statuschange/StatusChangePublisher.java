@@ -63,8 +63,10 @@ public class StatusChangePublisher implements WorkflowStatusListener {
                 try {
                     workflow = blockingQueue.take();
                     statusChangeNotification = new StatusChangeNotification(workflow.toWorkflow());
-                    String jsonWorkflow = statusChangeNotification.toJsonString();
-                    LOGGER.info("Publishing StatusChangeNotification: {}", jsonWorkflow);
+                    if (LOGGER.isInfoEnabled()) {
+                        String jsonWorkflow = statusChangeNotification.toJsonString();
+                        LOGGER.info("Publishing StatusChangeNotification: {}", jsonWorkflow);
+                    }
                     publishStatusChangeNotification(statusChangeNotification);
                     LOGGER.debug(
                             "Workflow {} publish is successful.",

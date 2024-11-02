@@ -42,7 +42,7 @@ public class TaskNotification extends TaskSummary {
 
     private String taskDescription;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     public String getReferenceTaskName() {
         return referenceTaskName;

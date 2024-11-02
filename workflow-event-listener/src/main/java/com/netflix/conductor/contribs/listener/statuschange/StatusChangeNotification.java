@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 @JsonFilter("SecretRemovalFilter")
 class StatusChangeNotification extends WorkflowSummary {
     private static final Logger LOGGER = LoggerFactory.getLogger(StatusChangePublisher.class);
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper = new ObjectMapper();
     private StatusNotifier statusNotifier;
 
     StatusChangeNotification(Workflow workflow) {

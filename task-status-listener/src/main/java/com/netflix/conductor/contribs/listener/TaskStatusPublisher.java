@@ -42,12 +42,20 @@ public class TaskStatusPublisher implements TaskStatusListener {
 
     class ExceptionHandler implements Thread.UncaughtExceptionHandler {
         public void uncaughtException(Thread t, Throwable e) {
-            LOGGER.info("An exception has been captured\n");
-            LOGGER.info("Thread: {}\n", t.getName());
-            LOGGER.info("Exception: {}: {}\n", e.getClass().getName(), e.getMessage());
-            LOGGER.info("Stack Trace: \n");
-            e.printStackTrace(System.out);
-            LOGGER.info("Thread status: {}\n", t.getState());
+            LOGGER.warn(
+                    "An exception has been captured\n"
+                            + "Thread: "
+                            + t.getName()
+                            + "\n"
+                            + "Exception: "
+                            + e.getClass().getName()
+                            + ": "
+                            + e.getMessage()
+                            + "\n"
+                            + "Thread status: "
+                            + t.getState()
+                            + "\n",
+                    e);
             new ConsumerThread().start();
         }
     }
@@ -64,8 +72,10 @@ public class TaskStatusPublisher implements TaskStatusListener {
                 try {
                     task = blockingQueue.take();
                     taskNotification = new TaskNotification(task.toTask());
-                    String jsonTask = taskNotification.toJsonString();
-                    LOGGER.info("Publishing TaskNotification: {}", jsonTask);
+                    if (LOGGER.isInfoEnabled()) {
+                        String jsonTask = taskNotification.toJsonString();
+                        LOGGER.info("Publishing TaskNotification: {}", jsonTask);
+                    }
                     if (taskNotification.getTaskType().equals("SUB_WORKFLOW")) {
                         LOGGER.info(
                                 "Skip task '{}' notification. Task type is SUB_WORKFLOW.",

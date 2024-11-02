@@ -36,6 +36,10 @@ public class ObjectMapperProvider {
                 JsonInclude.Value.construct(
                         JsonInclude.Include.NON_NULL, JsonInclude.Include.ALWAYS));
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, true);
+        objectMapper.configure(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE, false);
+        objectMapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.registerModule(new KotlinModule.Builder().build());
         return objectMapper;

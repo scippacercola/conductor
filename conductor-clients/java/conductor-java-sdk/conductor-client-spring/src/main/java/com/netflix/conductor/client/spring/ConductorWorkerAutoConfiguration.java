@@ -12,8 +12,10 @@
  */
 package com.netflix.conductor.client.spring;
 
+import java.util.List;
 import java.util.Map;
 
+import com.netflix.conductor.client.spring.autoconfigure.AnnotationWorkerExecutorCustomizer;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -34,9 +36,11 @@ import com.netflix.conductor.sdk.workflow.executor.task.WorkerConfiguration;
 public class ConductorWorkerAutoConfiguration {
 
     private final TaskClient taskClient;
+    private final List<AnnotationWorkerExecutorCustomizer> customizers;
 
-    public ConductorWorkerAutoConfiguration(TaskClient taskClient) {
+    public ConductorWorkerAutoConfiguration(TaskClient taskClient, List<AnnotationWorkerExecutorCustomizer> customizers) {
         this.taskClient = taskClient;
+        this.customizers = customizers;
     }
 
     @EventListener(ContextRefreshedEvent.class)
@@ -45,6 +49,7 @@ public class ConductorWorkerAutoConfiguration {
         Environment environment = applicationContext.getEnvironment();
         WorkerConfiguration configuration = new SpringWorkerConfiguration(environment);
         AnnotatedWorkerExecutor annotatedWorkerExecutor = new AnnotatedWorkerExecutor(taskClient, configuration);
+        customizers.forEach(customizer -> customizer.customize(annotatedWorkerExecutor));
 
         Map<String, Object> beans = applicationContext.getBeansWithAnnotation(Component.class);
         beans.values().forEach(annotatedWorkerExecutor::addBean);

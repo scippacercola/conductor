@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.conductor.common.config.ObjectMapperProvider;
+import org.apache.commons.lang3.Validate;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +58,8 @@ public class AnnotatedWorkerExecutor {
 
     private final WorkerConfiguration workerConfiguration;
 
+    private ObjectMapper objectMapper = new ObjectMapperProvider().getObjectMapper();
+
     public AnnotatedWorkerExecutor(TaskClient taskClient) {
         this.taskClient = taskClient;
         this.workerConfiguration = new WorkerConfiguration();
@@ -67,6 +73,11 @@ public class AnnotatedWorkerExecutor {
     public AnnotatedWorkerExecutor(TaskClient taskClient, WorkerConfiguration workerConfiguration) {
         this.taskClient = taskClient;
         this.workerConfiguration = workerConfiguration;
+    }
+
+    public void setObjectMapper(@NonNull ObjectMapper objectMapper) {
+        Validate.notNull(objectMapper, "Object Mapper cannot be null");
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -177,7 +188,7 @@ public class AnnotatedWorkerExecutor {
             workerDomains.put(name, domain);
         }
 
-        AnnotatedWorker executor = new AnnotatedWorker(name, method, bean);
+        AnnotatedWorker executor = new AnnotatedWorker(name, method, bean, objectMapper);
         executor.setPollingInterval(workerToPollingInterval.get(name));
         workers.add(executor);
 

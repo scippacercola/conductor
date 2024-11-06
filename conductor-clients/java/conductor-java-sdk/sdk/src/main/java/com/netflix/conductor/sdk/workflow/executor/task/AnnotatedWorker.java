@@ -45,18 +45,18 @@ public class AnnotatedWorker implements Worker {
 
     private final Object obj;
 
-    private final ObjectMapper om = new ObjectMapperProvider().getObjectMapper();
+    private final ObjectMapper om;
 
     private int pollingInterval = 100;
 
     private final Set<TaskResult.Status> failedStatuses =
             Set.of(TaskResult.Status.FAILED, TaskResult.Status.FAILED_WITH_TERMINAL_ERROR);
 
-    public AnnotatedWorker(String name, Method workerMethod, Object obj) {
+    public AnnotatedWorker(String name, Method workerMethod, Object obj, ObjectMapper om) {
         this.name = name;
         this.workerMethod = workerMethod;
         this.obj = obj;
-        om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.om = om;
     }
 
     @Override

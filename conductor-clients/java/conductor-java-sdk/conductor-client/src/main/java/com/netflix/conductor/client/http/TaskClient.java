@@ -182,6 +182,32 @@ public final class TaskClient {
         client.execute(request);
     }
 
+    public String updateTask(
+            String workflowId,
+            String taskRefName,
+            TaskResult.Status status,
+            String workerId,
+            Map<String, Object> taskOutputData) {
+        Validate.notBlank(workflowId, "WorkflowId cannot be null");
+        Validate.notBlank(taskRefName, "TaskRefName cannot be null");
+        Validate.notNull(status, "Status cannot be null");
+        Validate.notNull(taskOutputData, "TaskOutputData cannot be null");
+
+        ConductorClientRequest request = ConductorClientRequest.builder()
+                .method(Method.POST)
+                .path("/tasks/{workflowId}/{taskRefName}/{status}")
+                .addPathParam("workflowId", workflowId)
+                .addPathParam("taskRefName", taskRefName)
+                .addPathParam("status", status.toString())
+                .addQueryParam("workerid", workerId)
+                .body(taskOutputData)
+                .build();
+
+        ConductorClientResponse<String> response = client.execute(request, new TypeReference<>() {
+        });
+        return response.getData();
+    }
+
     public Optional<String> evaluateAndUploadLargePayload(Map<String, Object> taskOutputData, String taskType) {
         if (!conductorClientConfiguration.isEnforceThresholds()) {
             return Optional.empty();

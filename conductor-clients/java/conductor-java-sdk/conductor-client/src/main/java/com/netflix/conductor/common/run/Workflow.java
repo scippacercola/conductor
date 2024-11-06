@@ -460,19 +460,16 @@ public class Workflow extends Auditable {
         if (refName == null) {
             throw new RuntimeException("refName passed is null.  Check the workflow execution.  For dynamic tasks, make sure referenceTaskName is set to a not null value");
         }
-        LinkedList<Task> found = new LinkedList<>();
+        Task lastFound = null;
         for (Task t : tasks) {
             if (t.getReferenceTaskName() == null) {
                 throw new RuntimeException("Task " + t.getTaskDefName() + ", seq=" + t.getSeq() + " does not have reference name specified.");
             }
             if (t.getReferenceTaskName().equals(refName)) {
-                found.add(t);
+                lastFound = t;
             }
         }
-        if (found.isEmpty()) {
-            return null;
-        }
-        return found.getLast();
+        return lastFound;
     }
 
     /**

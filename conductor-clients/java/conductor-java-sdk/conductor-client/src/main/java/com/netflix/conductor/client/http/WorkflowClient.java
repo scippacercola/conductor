@@ -354,17 +354,20 @@ public final class WorkflowClient {
      * @param taskReferenceName the reference name of the task to be skipped
      */
     public void skipTaskFromWorkflow(String workflowId, String taskReferenceName) {
+        skipTaskFromWorkflow(workflowId, taskReferenceName, new SkipTaskRequest());
+    }
+
+    public void skipTaskFromWorkflow(String workflowId, String taskReferenceName, SkipTaskRequest skipTaskRequest) {
         Validate.notBlank(workflowId, "workflow id cannot be blank");
         Validate.notBlank(taskReferenceName, "Task reference name cannot be blank");
+        Validate.notNull(skipTaskRequest, "SkipTaskRequest cannot be null");
 
-        //FIXME skipTaskRequest content is always empty
-        SkipTaskRequest skipTaskRequest = new SkipTaskRequest();
         ConductorClientRequest request = ConductorClientRequest.builder()
                 .method(Method.PUT)
                 .path("/workflow/{workflowId}/skiptask/{taskReferenceName}")
                 .addPathParam("workflowId", workflowId)
                 .addPathParam("taskReferenceName", taskReferenceName)
-                .body(skipTaskRequest) //FIXME review this. It was passed as a query param?!
+                .body(skipTaskRequest)
                 .build();
 
         client.execute(request);
